@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: ${CONTAINER_NAME}_db
+    build:
+      context: ./db
+    ports:
+      - "${DBPORT}:5432"
+    volumes:
+      - ./db/data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${DBNAME}
+      - POSTGRES_USER=${DBUSER}
+      - POSTGRES_PASSWORD=${DBPWD}
+    networks:
+      - pressure_network
+    
+  app:
+    container_name: pressure_app
+    build:
+      context: ./app
+    volumes:
+      - ./app/scripts:/go/scripts
+      - ./.env:/go/scripts/.env
+    networks:
+      - pressure_network
+
+
+networks:
+  pressure_network:
