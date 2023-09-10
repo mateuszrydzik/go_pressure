@@ -79,8 +79,9 @@ func main() {
 	INSERT INTO pressure (station, pressure, date, hour)
 	VALUES ($1, $2, $3, $4)
 	RETURNING id`
+	id := 0
 
-	err = db.QueryRow(sqlStatement, pressure.Station, pressure.Pressure, pressure.Date, pressure.Hour)
+	err = db.QueryRow(sqlStatement, pressure.Station, pressure.Pressure, pressure.Date, pressure.Hour).Scan(&id)
 	if err != nil {
 		panic(err)
 	}

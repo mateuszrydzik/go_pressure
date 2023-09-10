@@ -17,7 +17,7 @@ aplikacja wymaga dockera i docker compose
 
 naley utworzy plik `.env` w głównym katalogu, na bazie pliku `.envtemplate`, i uzupełnić go o wartości.
 
-2. uruchomienie
+2. uruchomienie kontenerów
 
 przy pierwszym uruchomieniu, należy wykonać polecenie
 `docker-compose up --build`
@@ -25,3 +25,20 @@ przy kolejnych uruchomieniach, wystarczy wykonać polecenie
 `docker-compose up`
 
 przy uruchomionej aplikacji, można lokalnie połączyć się z bazą danych, wykorzystując podane zmienne środowiskowe do połączenia.
+
+3. uruchomienie aplikacji
+
+aplikacja jest dostępna wewnątrz kontenera
+
+`docker exec -it {CONTAINER_NAME}_app bash`
+
+dla domyślnej zmiennej CONTAINER_NAME, polecenie będzie wyglądało następująco:
+`docker exec -it pressure_app bash`
+
+wewnątrz kontenera, aplikacja znajduje się w katalogu `scripts`
+aplikację można uruchomić poleceniem `go run main.go`, albo zbudować plik poleceniem `go build main.go` i uruchomić ją poleceniem `./go_pressure`
+```
+cd scripts
+go build
+./go_pressure
+```
