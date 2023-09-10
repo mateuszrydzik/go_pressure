@@ -42,3 +42,6 @@ cd scripts
 go build
 ./go_pressure
 ```
+## działanie aplikacji
+
+uruchamiając aplikację, zostanie wykonane zapytanie do api imgw, a następnie zapisanie dane do bazy danych. przypadkiem użycia i głównym wykorzystaniem tej aplikacji jest dodanie zadania do crona, w celu regularnego pozyskiwania danych (np. trzy razy dziennie).
