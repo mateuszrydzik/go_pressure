@@ -24,7 +24,9 @@ func main() {
 	godotenv.Load(".env")
 
 	// pobranie danych imgw
-	resp, err := http.Get("https://danepubliczne.imgw.pl/api/data/synop/id/12330")
+	station_id := os.Getenv("STATION_ID")
+	url := fmt.Sprintf("https://danepubliczne.imgw.pl/api/data/synop/id/%s", station_id)
+	resp, err := http.Get(url)
 	if err != nil {
 		fmt.Println("Błąd podczas wykonywania żądania HTTP:", err)
 		return
@@ -63,11 +65,17 @@ func main() {
 	dbuser := os.Getenv("DBUSER")
 	dbpassword := os.Getenv("DBPWD")
 	dbname := os.Getenv("DBNAME")
-	dbhost := "pressure_db"
+	dbhost := os.Getenv("DBHOST")
+	dbport, err := strconv.Atoi(os.Getenv("DBPORT"))
+
+	if err != nil {
+		fmt.Println("Błąd podczas konwersji portu:", err)
+		return
+	}
 
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
-		dbhost, 5432, dbuser, dbpassword, dbname)
+		dbhost, dbport, dbuser, dbpassword, dbname)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		panic(err)
