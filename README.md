@@ -35,14 +35,24 @@ aplikacja jest dostępna wewnątrz kontenera
 `docker exec -it {CONTAINER_NAME}_app bash`
 
 dla domyślnej zmiennej CONTAINER_NAME, polecenie będzie wyglądało następująco:
+
 `docker exec -it pressure_app bash`
 
-po uzupełnieniu pliku `.env` można sprawdzić, czy aplikacja działa poprawnie, korzystając z polecenia `go run main.go`. jeśli nie zostanie zwrócony żaden błąd, aplikacja działa poprawnie, a w tabeli powinien pojawić się nowy rekord.
+po uzupełnieniu pliku `.env` można sprawdzić, czy aplikacja działa poprawnie, korzystając z polecenia 
 
-jeśli aplikacja działa poprawnie, możemy zbudować plik wykonywalny, przy pomocy komendy `go build main.go`. w celu zbudowania pliku pod wybrane środowisko, należy zmodyfikować polecenie o odpowiednie wartoci docelowego systemu operacyjnego oraz architektury.
+`go run main.go`
 
-na przykład, dla macbook z apple m1, polecenie będzie wyglądało następująco:
-`GOOS=darwin GOARCH=arm64 go build main.go`
+jeśli nie zostanie zwrócony żaden błąd, aplikacja działa poprawnie, a w tabeli powinien pojawić się nowy rekord.
+
+jeśli aplikacja działa poprawnie, możemy zbudować plik wykonywalny, przy pomocy komendy 
+
+`go build main.go`
+
+w celu zbudowania pliku pod wybrane środowisko, należy zmodyfikować polecenie o odpowiednie wartoci docelowego systemu operacyjnego oraz architektury.
+
+na przykład, dla macOS z apple m1, polecenie będzie wyglądało następująco:
+
+`GOOS=darwin GOARCH=arm64 go build main.go`.
 
 spis dostępnych GOOS i GOARCH można znaleźć pod adresem:
 https://gist.github.com/zfarbp/121a76d5a3fde562c3955a606a9d6fcc
