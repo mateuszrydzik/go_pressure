@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"path/filepath"
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -21,48 +22,57 @@ type PressureData struct {
 }
 
 func main() {
-	// wczytanie zmiennych z pliku .env
-	godotenv.Load("../../.env")
-
-	// pobranie danych imgw
-	station_id := os.Getenv("STATION_ID")
+	// loading .env variables
+	path, err := filepath.Abs("../../.env")
+	if err != nil {
+		fmt.Println("Cannot access .env:", err)
+		os.Exit(1)
+	}
+	
+	err = godotenv.Load(path)
+	if err != nil {
+		fmt.Println("Cannot load .env:", err)
+		os.Exit(1)
+	}
+	
+	// downloading imgw data
+ 	station_id := os.Getenv("STATION_ID")
 	url := fmt.Sprintf("https://danepubliczne.imgw.pl/api/data/synop/id/%s", station_id)
 	resp, err := http.Get(url)
 	if err != nil {
-		fmt.Println("Błąd podczas wykonywania żądania HTTP:", err)
+		fmt.Println("Error when sending HTTP request:", err)
 		return
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		fmt.Println("Serwer zwrócił status inny niż 200 OK:", resp.Status)
+		fmt.Println("Serwer did not respond with 200 OK:", resp.Status)
 		return
 	}
 
-	// zamiana json na PressureData
+	// changing json to PressureData type
 	respData, errResp := io.ReadAll(resp.Body)
 	if errResp != nil {
-		fmt.Println("Błąd podczas odczytywania ciała odpowiedzi:", errResp)
+		fmt.Println("Cannot read response", errResp)
 		return
 	}
 
 	var pressure PressureData
-
 	errPressure := json.Unmarshal(respData, &pressure)
 	if errPressure != nil {
-		fmt.Println("Błąd podczas unmarshalowania JSON:", errPressure)
+		fmt.Println("Cannot unmarshal JSON:", errPressure)
 		return
 	}
 
-	// konwersja stringa na float64
+	// converting string to float
 	pressureFloat, errConv := strconv.ParseFloat(pressure.Pressure, 64)
 	if errConv != nil {
-		fmt.Println("Błąd podczas konwersji ciśnienia:", errConv)
+		fmt.Println("Cannot converte pressure from string to float:", errConv)
 		return
 	}
 
-	pressure.Pressure = fmt.Sprintf("%.2f", pressureFloat) // Formatujemy float do dwóch miejsc po przecinku
+	pressure.Pressure = fmt.Sprintf("%.2f", pressureFloat)
 
-	// połączenie z bazą
+	// connecting to the database
 	dbuser := os.Getenv("DBUSER")
 	dbpassword := os.Getenv("DBPWD")
 	dbname := os.Getenv("DBNAME")
@@ -70,7 +80,7 @@ func main() {
 	dbport, err := strconv.Atoi(os.Getenv("DBPORT"))
 
 	if err != nil {
-		fmt.Println("Błąd podczas konwersji portu:", err)
+		fmt.Println("Cannot converte db_port from string to integer", err)
 		return
 	}
 
@@ -83,7 +93,7 @@ func main() {
 	}
 	defer db.Close()
 
-	// dodanie danych do bazy
+	// sending data to database
 	sqlStatement := `
 	INSERT INTO pressure (station, pressure, date, hour)
 	VALUES ($1, $2, $3, $4)
