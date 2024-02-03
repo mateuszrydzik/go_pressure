@@ -50,4 +50,7 @@ executable file will be built in the application directory.
 
 ## what does the app do?
 
-when you run the application, it will make a request to the imgw api, and then save the data to the database. the main use case and purpose of this application is to add a cron job to regularly fetch the data (e.g. three times a day).
+when you run the application, it will make a request to the imgw api, and then save the data to the database. the main use case and purpose of this application is to add a cron job to regularly fetch the data (e.g. four times a day).
+
+this is an example of a cron job that runs the application every 6 hours:
+`0 6,12,18,0 * * * /root/go_pressure/app/scripts/main`
