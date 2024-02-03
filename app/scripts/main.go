@@ -4,17 +4,14 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"github.com/joho/godotenv"
-	_ "github.com/lib/pq"
 	"io"
 	"net/http"
 	"os"
 	"strconv"
-)
 
-type PressureResponse struct {
-    Data []PressureData `json:"data"`
-}
+	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
+)
 
 type PressureData struct {
 	Station  string `json:"stacja"`
@@ -25,7 +22,7 @@ type PressureData struct {
 
 func main() {
 	// wczytanie zmiennych z pliku .env
-	godotenv.Load(".env")
+	godotenv.Load("../../.env")
 
 	// pobranie danych imgw
 	station_id := os.Getenv("STATION_ID")
@@ -49,21 +46,13 @@ func main() {
 	}
 
 	var pressure PressureData
-	var response PressureResponse
-	errPressure := json.Unmarshal(respData, &response)
+
+	errPressure := json.Unmarshal(respData, &pressure)
 	if errPressure != nil {
 		fmt.Println("Błąd podczas unmarshalowania JSON:", errPressure)
 		return
 	}
-	
-	if len(response.Data) == 0 {
-		fmt.Println("Brak danych w odpowiedzi")
-		return
-	}
-	
-	// Pobierz pierwszy element z tablicy danych
-	pressure = response.Data[0]
-	
+
 	// konwersja stringa na float64
 	pressureFloat, errConv := strconv.ParseFloat(pressure.Pressure, 64)
 	if errConv != nil {
