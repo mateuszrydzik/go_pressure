@@ -12,6 +12,10 @@ import (
 	"strconv"
 )
 
+type PressureResponse struct {
+    Data []PressureData `json:"data"`
+}
+
 type PressureData struct {
 	Station  string `json:"stacja"`
 	Pressure string `json:"cisnienie"`
@@ -45,13 +49,21 @@ func main() {
 	}
 
 	var pressure PressureData
-
-	errPressure := json.Unmarshal(respData, &pressure)
+	var response PressureResponse
+	errPressure := json.Unmarshal(respData, &response)
 	if errPressure != nil {
 		fmt.Println("Błąd podczas unmarshalowania JSON:", errPressure)
 		return
 	}
-
+	
+	if len(response.Data) == 0 {
+		fmt.Println("Brak danych w odpowiedzi")
+		return
+	}
+	
+	// Pobierz pierwszy element z tablicy danych
+	pressure = response.Data[0]
+	
 	// konwersja stringa na float64
 	pressureFloat, errConv := strconv.ParseFloat(pressure.Pressure, 64)
 	if errConv != nil {
