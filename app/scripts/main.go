@@ -23,13 +23,19 @@ type PressureData struct {
 
 func main() {
 	// loading .env variables
-	path, err := filepath.Abs("../../.env")
+	exePath, err := os.Executable()
 	if err != nil {
-		fmt.Println("Cannot access .env:", err)
-		os.Exit(1)
+		fmt.Println("Cannot access exec file", err)
+		return
 	}
-	
-	err = godotenv.Load(path)
+
+	exeDir := filepath.Dir(exePath)
+	envFilePathRelative := "../../.env"
+	envFilePathAbsolute := filepath.Join(exeDir, envFilePathRelative)
+
+	fmt.Println(envFilePathAbsolute)
+
+	err = godotenv.Load(envFilePathAbsolute)
 	if err != nil {
 		fmt.Println("Cannot load .env:", err)
 		os.Exit(1)
